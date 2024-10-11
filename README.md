@@ -36,7 +36,7 @@ This project evaluates and compares pixel-based and object-based classification 
 
 ### Pixel-Based Classification
 <p align="center">
-  <img src="path_to_pixel_based_image.png" alt="Pixel-Based Classification Map" width="600">
+  <img src="pixel-basedmap.png" alt="Pixel-Based Classification Map" width="600">
 </p>
 <p align="center"><em>Figure 1: Pixel-Based Classification of Informal Settlements in Greater Kumasi</em></p>
 
