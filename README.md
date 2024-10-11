@@ -2,7 +2,7 @@
 
 ## Project Information
 
-**Authors:**
+**Author:**
 - Courage Kumawu
   
 **Supervisor:**
@@ -63,13 +63,30 @@ The images above showcase the results of our classification methods. Figure 1 di
 - **classification_code.js**: The main code used for image classification, accuracy assessment, and export of the classified maps and accuracy metrics.
 - **accuracy_measures.csv**: Contains accuracy metrics for both object-based and pixel-based classification methods.
 
-## How to Use the Code
+## How to Use the Code:
 
-1. Clone the repository.
-2. Open the script in Google Earth Engine.
-3. Modify the region of interest (AOI) if needed.
-4. Run the code to generate classified maps and export them to Google Drive.
-5. Adjust cloud-masking parameters if applying the method to a different geographic area.
+1. **Clone the Repository**: Clone this repository to your local machine using:
+  
+2. **Open in Google Earth Engine**:
+
+3. **Add Your Own Training Points**:
+   - You need to add your own training points for classification. These can be uploaded as feature collections or drawn directly in Google Earth Engine. 
+   - The training points should represent different land cover classes (e.g., informal settlements, formal settlements, vegetation, bare land, water) and be labeled with the `classes` attribute.
+
+4. **Modify the Region of Interest (AOI)**:
+   - Ensure that the `aoi` variable in the code points to your geographic area of interest. This can be a shapefile you upload or a geometry created in Google Earth Engine.
+
+5. **Run the Code**:
+   - After configuring the training points and AOI, run the code in GEE. This will perform both pixel-based and object-based classification using the Random Forest classifier.
+
+6. **Export the Results**:
+   - The classified images will be exported to your Google Drive as GeoTIFF files. You can adjust the `Export.image.toDrive` parameters (such as file name, scale, or region) as needed.
+
+7. **Adjust Cloud-Masking Parameters (Optional)**:
+   - If you're working with a different region or time period, you may want to adjust the cloud-masking thresholds (SWIR1 and SWIR2 bands) to suit the cloud conditions of your area.
+
+---
+
 
 ## Exported Files
 
