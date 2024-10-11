@@ -42,7 +42,7 @@ This project evaluates and compares pixel-based and object-based classification 
 
 ### Object-Based Classification
 <p align="center">
-  <img src="path_to_object_based_image.png" alt="Object-Based Classification Map" width="600">
+  <img src="object-basedmap.png" alt="Object-Based Classification Map" width="600">
 </p>
 <p align="center"><em>Figure 2: Object-Based Classification of Informal Settlements in Greater Kumasi</em></p>
 
