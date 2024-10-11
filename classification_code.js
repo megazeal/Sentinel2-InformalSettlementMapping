@@ -89,7 +89,7 @@ Export.image.toDrive({
 });
 
 // Step 9: Visualize the classified image on the map
-Map.addLayer(classifiedorf, {min: 0, max: 255, palette: 'green,brown,blue,red,yellow'}, 'objectclassifiedorf'); // Add classified layer to the map
+Map.addLayer(classifiedorf, {min: 1, max: 5, palette: ['#066c19','#e21313','#c58021','#321fff','#43e62a']}, 'objectclassifiedorf'); // Add classified layer to the map
 
 // Print classified image band names for debugging
 print('classsifiedorf bandnames', classifiedorf.bandNames()); 
@@ -146,7 +146,7 @@ var trainedClassifierprf = ee.Classifier.smileRandomForest(50).train({
 var classifiedprf = readyimage.classify(trainedClassifierprf); // Apply the classifier to pixels
 
 // Add the pixel-based classified image to the map for visualization
-Map.addLayer(classifiedprf, {min: 0, max: 255, palette: 'green,brown,blue,red,yellow'}, 'pixel-based rf Classified Image');
+Map.addLayer(classifiedprf, {min: 1, max: 5, palette: ['#066c19','#e21313','#c58021','#321fff','#43e62a']}, 'pixel-based rf Classified Image');
 
 // Step 13: Evaluate training accuracy for pixel-based classification
 var trainAccuracyprf = trainedClassifierprf.confusionMatrix(); // Confusion matrix for training set
