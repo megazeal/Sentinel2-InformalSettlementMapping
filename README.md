@@ -1,4 +1,4 @@
-# Mapping Informal Settlements Using Remote Sensing Techniques
+# Mapping Informal Settlements Using Machine Learning and Remote Sensing
 
 ## Project Information
 
