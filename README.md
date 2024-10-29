@@ -20,74 +20,247 @@ This project evaluates and compares pixel-based and object-based classification 
 
 ## Methodology
 
-1. **Data Acquisition**: Sentinel-2 imagery is filtered and preprocessed to remove clouds and shadows using cloud-masking techniques.
-2. **Object-Based Classification**: A segmentation approach using SNIC (Simple Non-Iterative Clustering) algorithm is applied, followed by classification with Random Forest.
-3. **Pixel-Based Classification**: The imagery is classified pixel-by-pixel using the Random Forest classifier.
-4. **Accuracy Assessment**: Confusion matrices and accuracy metrics are computed to evaluate the performance of each classification approach.
-5. **Exporting Results**: The classified images and accuracy metrics are exported for further analysis.
+### Data Processing Steps
+
+1. **Image Collection and Filtering**
+   - Filter Sentinel-2 imagery for the area of interest (AOI)
+   - Apply date range and cloud coverage filters
+   - Implement cloud masking using SWIR1 and SWIR2 bands
+
+2. **Cloud Masking**
+   - Apply threshold values to identify clouds:
+     - SWIR1 threshold: 0.15
+     - SWIR2 threshold: 0.1
+   - Create and apply cloud masks to filtered images
+
+3. **Image Preparation**
+   - Compute median values of cloud-masked images
+   - Clip images to study area boundaries
+   - Prepare bands for classification
+
+4. **Classification Approaches**
+
+   a) **Object-Based Classification**
+   - Generate segmentation seeds
+   - Apply SNIC algorithm for image segmentation
+   - Parameters:
+     - Size: 10
+     - Compactness: 0
+     - Connectivity: 8
+     - Neighborhood Size: 500
+
+   b) **Pixel-Based Classification**
+   - Direct classification of pixels
+   - Use of spectral bands (B2, B3, B4, B8)
+
+5. **Machine Learning**
+   - Random Forest classifier with 50 trees
+   - Training data split: 80% training, 20% validation
+   - Features used: B2, B3, B4, B8 bands
+
+## Implementation Options
+
+### 1. Google Earth Engine JavaScript Implementation
+
+```javascript
+// Filter Sentinel-2 data
+var filtered_image1 = sent2.filterBounds(aoi)
+  .filterDate('2023-01-01', '2023-06-30')
+  .filterMetadata('CLOUD_COVERAGE_ASSESSMENT', 'less_than', 1);
+
+// Cloud masking function
+function maskClouds(image) {
+  var swir1 = image.select('B11');
+  var swir2 = image.select('B12');
+  var cloudMask = swir1.lt(0.15).and(swir2.lt(0.1));
+  return image.updateMask(cloudMask.not());
+}
+
+// Main classification workflow
+// [Rest of JavaScript implementation...]
+```
+
+### 2. Python Implementation using geemap
+
+```python
+import ee
+import geemap
+
+# Initialize Earth Engine
+ee.Authenticate()
+ee.Initialize()
+
+# Create interactive map
+Map = geemap.Map()
+
+# Filter Sentinel-2 data
+filtered_image1 = (ee.ImageCollection('COPERNICUS/S2')
+    .filterBounds(aoi)
+    .filterDate('2023-01-01', '2023-06-30')
+    .filterMetadata('CLOUD_COVERAGE_ASSESSMENT', 'less_than', 1))
+
+# Cloud masking function
+def maskClouds(image):
+    swir1 = image.select('B11')
+    swir2 = image.select('B12')
+    cloudMask = swir1.lt(0.15).And(swir2.lt(0.1))
+    return image.updateMask(cloudMask.Not())
+
+# Main classification workflow
+# [Rest of Python implementation...]
+```
+
+## Setup and Installation
+
+### Prerequisites
+- Google Earth Engine account
+- Python 3.7 or higher (for geemap implementation)
+- Git (for version control)
+
+### JavaScript Implementation Setup
+1. Access Google Earth Engine Code Editor
+2. Copy and paste the JavaScript code
+3. Set up your study area and training data
+4. Run the analysis
+
+### Python/geemap Setup
+1. Install required packages:
+   ```bash
+   pip install geemap earthengine-api jupyter
+   ```
+
+2. Authentication:
+   ```python
+   import ee
+   ee.Authenticate()
+   ee.Initialize()
+   ```
+
+3. Run Jupyter Notebook:
+   ```bash
+   jupyter notebook
+   ```
 
 ## Results
 
-- Object-based classification outperformed pixel-based classification in terms of overall accuracy, precision, recall, and F1-score.
-   - Object-Based Accuracy: 95.70%
-   - Pixel-Based Accuracy: 93.25%
+### Accuracy Assessment
+- Object-based classification outperformed pixel-based classification:
+  - Object-Based Accuracy: 95.70%
+  - Pixel-Based Accuracy: 93.25%
 
-## Visual Results
+### Visual Results
 
-### Pixel-Based Classification
+#### Pixel-Based Classification
 <p align="center">
   <img src="pixel-basedmap.png" alt="Pixel-Based Classification Map" width="600">
 </p>
 <p align="center"><em>Figure 1: Pixel-Based Classification of Informal Settlements in Greater Kumasi</em></p>
 
-### Object-Based Classification
+#### Object-Based Classification
 <p align="center">
   <img src="object-basedmap.png" alt="Object-Based Classification Map" width="600">
 </p>
 <p align="center"><em>Figure 2: Object-Based Classification of Informal Settlements in Greater Kumasi</em></p>
 
-The images above showcase the results of our classification methods. Figure 1 displays the pixel-based classification, while Figure 2 shows the object-based classification. As evident from the visual comparison and our accuracy assessment, the object-based method (Figure 2) provides a more accurate representation of informal settlements in the Greater Kumasi area.
+## File Structure
 
-## Key Findings
+```
+informal-settlements-mapping/
+├── README.md
+├── code/
+│   ├── classification_code.js
+│   └── classification_code.py
+├── data/
+│   ├── training_points/
+│   └── validation_points/
+├── results/
+│   ├── accuracy_measures.csv
+│   ├── object-basedmap.png
+│   └── pixel-basedmap.png
+└── requirements.txt
+```
 
-- Object-based classification better handled the complexity and fragmentation of informal settlements.
-- Pixel-based classification was less accurate, particularly in areas with mixed land use.
+## Usage Guidelines
 
-## Tools Used
+### Data Preparation
+1. Prepare training points for different land cover classes:
+   - Informal settlements
+   - Formal settlements
+   - Vegetation
+   - Bare land
+   - Water bodies
 
-- **Google Earth Engine**: For data processing, image classification, and accuracy assessment.
-- **Random Forest Classifier**: For both object-based and pixel-based classification approaches.
+2. Ensure training points are labeled with the 'classes' attribute
 
-## File Descriptions
+### Running the Analysis
 
-- **classification_code.js**: The main code used for image classification, accuracy assessment, and export of the classified maps and accuracy metrics.
-- **accuracy_measures.csv**: Contains accuracy metrics for both object-based and pixel-based classification methods.
+#### JavaScript Version
+1. Open Google Earth Engine Code Editor
+2. Load your training points as feature collections
+3. Set your area of interest (AOI)
+4. Run the classification
+5. Export results to Google Drive
 
-## How to Use the Code:
+#### Python/geemap Version
+1. Open Jupyter Notebook
+2. Run the classification script
+3. Use interactive map for visualization
+4. Export results using geemap functions
 
-1. **Clone the Repository**: Clone this repository to your local machine using:
-  
-2. **Open in Google Earth Engine**:
+## Interactive Features (geemap)
 
-3. **Add Your Own Training Points**:
-   - You need to add your own training points for classification. These can be uploaded as feature collections or drawn directly in Google Earth Engine. 
-   - The training points should represent different land cover classes (e.g., informal settlements, formal settlements, vegetation, bare land, water) and be labeled with the `classes` attribute.
-
-4. **Modify the Region of Interest (AOI)**:
-   - Ensure that the `aoi` variable in the code points to your geographic area of interest. This can be a shapefile you upload or a geometry created in Google Earth Engine.
-
-5. **Run the Code**:
-   - After configuring the training points and AOI, run the code in GEE. This will perform both pixel-based and object-based classification using the Random Forest classifier.
-
-6. **Export the Results**:
-   - The classified images will be exported to your Google Drive as GeoTIFF files. You can adjust the `Export.image.toDrive` parameters (such as file name, scale, or region) as needed.
-
-7. **Adjust Cloud-Masking Parameters (Optional)**:
-   - If you're working with a different region or time period, you may want to adjust the cloud-masking thresholds (SWIR1 and SWIR2 bands) to suit the cloud conditions of your area.
-
----
-
+The geemap implementation provides:
+- Interactive map visualization
+- Layer opacity control
+- Base map selection
+- Export capabilities
+- Interactive drawing tools for training data collection
 
 ## Exported Files
 
-Classified images and accuracy metrics are exported as GeoTIFF and CSV files respectively, which can be visualized and analyzed further in GIS platforms.
+Both implementations export:
+- Classified images (GeoTIFF)
+- Accuracy metrics (CSV)
+- Confusion matrices
+- Visualization maps
+
+## Troubleshooting
+
+Common Issues and Solutions:
+1. Memory Errors
+   - Reduce the size of your study area
+   - Increase the scale parameter
+   - Use smaller time ranges for image collection
+
+2. Authentication Issues
+   - Ensure proper GEE authentication
+   - Check internet connection
+   - Verify account permissions
+
+3. Export Errors
+   - Check export region size
+   - Verify drive permissions
+   - Adjust maxPixels parameter
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+
+- Google Earth Engine team
+- geemap developers
+- Kwame Nkrumah University of Science and Technology
+
+## Contact
+
+Courage Kumawu - [couragezeal544@gmail.com]
+
